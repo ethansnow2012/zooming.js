@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        /*other css that will be remove soon*/
+        body{
+            min-height:700px;
+        }
+    </style>
+    <style>
+        .zooming-body{
+            position: relative;
+        }
+
+        .zooming-frame{
+            transition: all 1s ease;
+            width: 200px;
+            height: 200px;
+            position: absolute;
+            top: var(---y);
+            left: var(---x);
+            background: grey;
+            width: var(---width);
+            height: var(---height);;
+        }
+    </style>
+    <div id="app">
+        <div class="zooming-frame p-block1" 
+            data-framemeta-y="100px" 
+            data-framemeta-x="100px" 
+            data-framemeta-width="300px" 
+            data-framemeta-height="300px" 
+            style="---y:100px; ---x:100px; ---width:300px;---height: 300px;"
+            >
+        </div>
+    </div>
+    <script src="./zooming.js" ></script>
+    <script>
+        const block1 = document.querySelector(".p-block1")
+        block1.addEventListener('click', ()=>{
+            if(block1.classList.contains(zooming.cssClasses.outZooming)){
+                zooming.in(0)
+            }else{
+                zooming.out(0)
+            }            
+        })
+    </script>
+</body>
+</html>

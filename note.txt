@@ -1,0 +1,16 @@
+TASK LOG:
+
+(2022/05/16)
+context 
+1. zoom in
+    1. block auto-fit width to 100vw; height to auto(OK)
+        - height also (inc OK)
+    2. position the block(OK)
+    3. make sure they transistion smooth(OK)
+        - add zoom state class(OK)
+2. zoom out(OK)
+3. zoom in on click(OK)
+
+other:
+1. transform back and forth width absolute and relative with 'zooming-frame'
+

@@ -1,0 +1,98 @@
+console.log('zooming.js');
+
+enum cssVariable  {
+    width = '---width',
+    height = '---height',
+    x = '---x',
+    y= '---y'
+}
+
+enum cssClasses  {
+    body = 'zooming-body',
+    inZooming = 'in-zooming',
+    outZooming = 'out-zooming'
+}
+
+enum frameOperations  {
+    in = 'in',
+    out = 'out'
+}
+
+
+
+const _zooming = function(){
+    const body:HTMLElement = document.body
+    const zoomingFrames: NodeListOf<HTMLElement> = document.querySelectorAll('.zooming-frame')     
+    const bodyClientRect = body.getBoundingClientRect();
+
+    zoomingFrames.forEach(x=>x.classList.add(cssClasses.outZooming))
+
+    body.classList.add(cssClasses.body)
+
+    this.zoomingFrames = zoomingFrames
+    this.bodyClientRect = bodyClientRect
+
+    this.cssClasses = cssClasses
+}
+_zooming.prototype.getContext = function(){
+    const viewportWidth = this.bodyClientRect.width as number
+    const viewportHeight = this.bodyClientRect.height as number
+    return {
+        viewportWidth,
+        viewportHeight
+    }
+}
+_zooming.prototype.toggleZoomInOut = function(targetFrame:HTMLElement, operation: frameOperations){
+    if(operation in frameOperations){
+        if(operation===frameOperations.in){
+            targetFrame.classList.add(cssClasses.inZooming)
+            targetFrame.classList.remove(cssClasses.inZooming)
+        }
+        switch (operation) {
+            case frameOperations.in:
+                targetFrame.classList.add(cssClasses.inZooming)
+                targetFrame.classList.remove(cssClasses.outZooming)
+                break
+            case frameOperations.out:
+                targetFrame.classList.add(cssClasses.outZooming)
+                targetFrame.classList.remove(cssClasses.inZooming)
+                break
+            default:
+                break           
+        }
+    }
+    
+}
+_zooming.prototype.in = function(index){
+    const targetIndex = index??0
+    const {viewportWidth, viewportHeight} = this.getContext()
+
+    const targetFrame: HTMLElement  = this.zoomingFrames[targetIndex]
+
+    this.toggleZoomInOut(targetFrame, frameOperations.in)
+
+    targetFrame.style.setProperty(cssVariable.width, `${viewportWidth}px`)
+    targetFrame.style.setProperty(cssVariable.height, `${viewportHeight}px`)
+    targetFrame.style.setProperty(cssVariable.x, `0`)
+    targetFrame.style.setProperty(cssVariable.y, `0`)
+
+    targetFrame.classList.add(cssClasses.inZooming)
+}
+
+_zooming.prototype.out = function(index){
+    const targetIndex = index??0
+    //const {viewportWidth, viewportHeight} = this.getContext()
+    const targetFrame: HTMLElement  = this.zoomingFrames[targetIndex]
+    this.toggleZoomInOut(targetFrame, frameOperations.out)
+
+    targetFrame.style.setProperty(cssVariable.width, `${targetFrame.dataset.framemetaWidth}`)
+    targetFrame.style.setProperty(cssVariable.height, `${targetFrame.dataset.framemetaHeight}`)
+    targetFrame.style.setProperty(cssVariable.x, `${targetFrame.dataset.framemetaX}`)
+    targetFrame.style.setProperty(cssVariable.y, `${targetFrame.dataset.framemetaY}`)
+
+    console.log(targetFrame)
+}
+
+const zooming = new _zooming() 
+
+//zooming1.in(0)
