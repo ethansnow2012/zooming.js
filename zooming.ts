@@ -1,19 +1,19 @@
 console.log('zooming.js');
 
-enum cssVariable  {
+enum cssVariable {
     width = '---width',
     height = '---height',
     x = '---x',
-    y= '---y'
+    y = '---y'
 }
 
-enum cssClasses  {
+enum cssClasses {
     body = 'zooming-body',
     inZooming = 'in-zooming',
     outZooming = 'out-zooming'
 }
 
-enum frameOperations  {
+enum frameOperations {
     in = 'in',
     out = 'out'
 }
@@ -23,16 +23,29 @@ type RectContext = {
     viewportHeight: number
 }
 
-type Zooming = {
-    getRectContext:  () => RectContext
+interface _zoomingType {
+    zoomingFrames?: NodeListOf<HTMLElement>
 }
 
-const _zooming = function(){
-    const body:HTMLElement = document.body
-    const zoomingFrames: NodeListOf<HTMLElement> = document.querySelectorAll('.zooming-frame')     
+interface ZoomingPrototype {
+    getRectContext: () => RectContext,
+    toggleZoomInOut: (targetFrame: HTMLElement, operation: frameOperations) => void,
+    in: (index: number|undefined)=>void,
+    out: (index: number|undefined)=>void,
+}
+interface ZoomingInnerThis {
+    zoomingFrames: NodeListOf<HTMLElement>
+    bodyClientRect: DOMRect
+    cssClasses: typeof cssClasses
+}
+interface Zooming extends ZoomingPrototype, ZoomingInnerThis {}
+
+function _zooming(this: Zooming): void {
+    const body: HTMLElement = document.body
+    const zoomingFrames: NodeListOf<HTMLElement> = document.querySelectorAll('.zooming-frame')
     const bodyClientRect = body.getBoundingClientRect();
 
-    zoomingFrames.forEach(x=>x.classList.add(cssClasses.outZooming))
+    zoomingFrames.forEach(x => x.classList.add(cssClasses.outZooming))
 
     body.classList.add(cssClasses.body)
 
@@ -40,8 +53,9 @@ const _zooming = function(){
     this.bodyClientRect = bodyClientRect
 
     this.cssClasses = cssClasses
+
 }
-_zooming.prototype.getRectContext = function():RectContext{
+_zooming.prototype.getRectContext = function (): RectContext {
     const viewportWidth = this.bodyClientRect.width as number
     const viewportHeight = this.bodyClientRect.height as number
     return {
@@ -49,9 +63,9 @@ _zooming.prototype.getRectContext = function():RectContext{
         viewportHeight
     }
 }
-_zooming.prototype.toggleZoomInOut = function(targetFrame:HTMLElement, operation: frameOperations){
-    if(operation in frameOperations){
-        if(operation===frameOperations.in){
+_zooming.prototype.toggleZoomInOut = function (targetFrame: HTMLElement, operation: frameOperations) {
+    if (operation in frameOperations) {
+        if (operation === frameOperations.in) {
             targetFrame.classList.add(cssClasses.inZooming)
             targetFrame.classList.remove(cssClasses.inZooming)
         }
@@ -65,18 +79,19 @@ _zooming.prototype.toggleZoomInOut = function(targetFrame:HTMLElement, operation
                 targetFrame.classList.remove(cssClasses.inZooming)
                 break
             default:
-                break           
+                break
         }
     }
-    
+
 }
-_zooming.prototype.in = function(index){
-    const targetIndex = index??0
-    const {viewportWidth, viewportHeight} = this.getRectContext()
+_zooming.prototype.in = function (index: number|undefined) {
+    const _this: Zooming = this
+    const targetIndex = index ?? 0
+    const { viewportWidth, viewportHeight } = _this.getRectContext()
 
-    const targetFrame: HTMLElement  = this.zoomingFrames[targetIndex]
+    const targetFrame: HTMLElement = _this.zoomingFrames[targetIndex]
 
-    this.toggleZoomInOut(targetFrame, frameOperations.in)
+    _this.toggleZoomInOut(targetFrame, frameOperations.in)
 
     targetFrame.style.setProperty(cssVariable.width, `${viewportWidth}px`)
     targetFrame.style.setProperty(cssVariable.height, `${viewportHeight}px`)
@@ -86,10 +101,10 @@ _zooming.prototype.in = function(index){
     targetFrame.classList.add(cssClasses.inZooming)
 }
 
-_zooming.prototype.out = function(index){
-    const targetIndex = index??0
+_zooming.prototype.out = function (index: number|undefined) {
+    const targetIndex = index ?? 0
     //const {viewportWidth, viewportHeight} = this.getRectContext()
-    const targetFrame: HTMLElement  = this.zoomingFrames[targetIndex]
+    const targetFrame: HTMLElement = this.zoomingFrames[targetIndex]
     this.toggleZoomInOut(targetFrame, frameOperations.out)
 
     targetFrame.style.setProperty(cssVariable.width, `${targetFrame.dataset.framemetaWidth}`)
@@ -100,5 +115,5 @@ _zooming.prototype.out = function(index){
     console.log(targetFrame)
 }
 
-export const zooming:Zooming = new _zooming()
- 
+export const zooming: Zooming = new _zooming()
+

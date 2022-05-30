@@ -4,8 +4,7 @@
   "description": "",
   "main": "zooming.js",
   "scripts": {
-    "watch": "webpack --watch",
-    "watch-ts": "tsc -w",
+    "ts-watch": "webpack --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
