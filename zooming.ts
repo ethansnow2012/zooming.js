@@ -23,19 +23,23 @@ type RectContext = {
     viewportHeight: number
 }
 
-
+interface ZoomingPrototype$helper {
+    toggle(target: HTMLElement): void
+}
 interface ZoomingPrototype {
     getRectContext(): RectContext,
     toggleZoomInOut(targetFrame: HTMLElement, operation: frameOperations): void,
-    in(index: number|undefined): void,
-    out(index: number|undefined): void,
+    in(index: HTMLElement): void,
+    out(index: HTMLElement): void,
 }
 interface ZoomingInnerThis {
-    
     bodyClientRect: DOMRect
-    cssClasses: typeof cssClasses
+    cssClasses: typeof cssClasses,
+    helper: ZoomingPrototype$helper
 }
-interface Zooming extends ZoomingPrototype, ZoomingInnerThis {}
+interface Zooming extends ZoomingPrototype, ZoomingInnerThis { }
+
+
 
 function _zooming(this: Zooming): void {
     const body: HTMLElement = document.body
@@ -44,9 +48,22 @@ function _zooming(this: Zooming): void {
     body.classList.add(cssClasses.body)
 
     this.bodyClientRect = bodyClientRect
-
     this.cssClasses = cssClasses
-
+    this.helper = {
+        toggle: (target) => {
+            const classList = target.classList
+            switch (true) {
+                case classList.contains(zooming.cssClasses.outZooming):
+                    this.in(target)
+                    break;
+                case classList.contains(zooming.cssClasses.inZooming):
+                    zooming.out(target)
+                    break;
+                default:
+                    zooming.in(target)
+            }
+        }
+    }
 }
 _zooming.prototype.getRectContext = function (): RectContext {
     const viewportWidth = this.bodyClientRect.width as number

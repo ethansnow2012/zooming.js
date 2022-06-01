@@ -11,6 +11,7 @@
         /*other css that will be remove soon*/
         body{
             min-height:700px;
+            margin: 0;
         }
     </style>
     <style>
@@ -34,29 +35,39 @@
         }
     </style>
     <div id="app">
-        <div class="zooming-frame p-block1 zooming-frame-incStyle" 
-            data-framemeta-y="100px" 
-            data-framemeta-x="100px" 
-            data-framemeta-width="300px" 
-            data-framemeta-height="300px" 
-            style="---y:100px; ---x:100px; ---width:300px;---height: 300px;"
-            >
+        <div class="playGround1">
+            <div class="zooming-frame p-block1 zooming-frame-incStyle" 
+                data-framemeta-y="100px" 
+                data-framemeta-x="100px" 
+                data-framemeta-width="300px" 
+                data-framemeta-height="300px" 
+                style="---y:100px; ---x:100px; ---width:300px;---height: 300px;"
+                >
+            </div>
+            <div class="zooming-frame p-block2 zooming-frame-incStyle" 
+                data-framemeta-y="500px" 
+                data-framemeta-x="500px" 
+                data-framemeta-width="100px" 
+                data-framemeta-height="100px" 
+                style="---y:500px; ---x:500px; ---width:100px;---height: 100px;"
+                >
+            </div>
+            <div class="zooming-frame p-block3 zooming-frame-incStyle" 
+                data-framemeta-y="10%" 
+                data-framemeta-x="10%" 
+                data-framemeta-width="10%" 
+                data-framemeta-height="10%" 
+                style="---y:10%; ---x:10%; ---width:10%;---height: 10%; background-color: aqua;"
+                >
+            </div>
+            <div>
+                <button class="p-button1">
+                    Invoke At Once
+                </button>
+            </div>
         </div>
-        <div class="zooming-frame p-block2 zooming-frame-incStyle" 
-            data-framemeta-y="500px" 
-            data-framemeta-x="500px" 
-            data-framemeta-width="100px" 
-            data-framemeta-height="100px" 
-            style="---y:500px; ---x:500px; ---width:100px;---height: 100px;"
-            >
-        </div>
-        <div class="zooming-frame p-block3 zooming-frame-incStyle" 
-            data-framemeta-y="10%" 
-            data-framemeta-x="10%" 
-            data-framemeta-width="10%" 
-            data-framemeta-height="10%" 
-            style="---y:10%; ---x:10%; ---width:10%;---height: 10%; background-color: aqua;"
-            >
+        <div class="playGround2">
+
         </div>
     </div>
     <script src="./zooming.js" ></script>
@@ -64,7 +75,10 @@
         const block1 = document.querySelector(".p-block1")
         const block2 = document.querySelector(".p-block2")
         const block3 = document.querySelector(".p-block3")
+        const button1 = document.querySelector(".p-button1")
+        
         block1.addEventListener('click', ()=>{
+            // keep this way of usage to make sure exposure of function/object right
             const classList = block1.classList
             switch(true){
                 case classList.contains(zooming.cssClasses.outZooming):
@@ -78,30 +92,10 @@
             }              
         })
         block2.addEventListener('click', ()=>{
-            const classList = block2.classList
-            switch(true){
-                case classList.contains(zooming.cssClasses.outZooming):
-                    zooming.in(block2)
-                    break;
-                case classList.contains(zooming.cssClasses.inZooming):
-                    zooming.out(block2)
-                    break;
-                default:
-                    zooming.in(block2)     
-            }     
+            zooming.helper.toggle(block2)
         })
         block3.addEventListener('click', ()=>{
-            const classList = block3.classList
-            switch(true){
-                case classList.contains(zooming.cssClasses.outZooming):
-                    zooming.in(block3)
-                    break;
-                case classList.contains(zooming.cssClasses.inZooming):
-                    zooming.out(block3)
-                    break;
-                default:
-                    zooming.in(block3)     
-            }     
+            zooming.helper.toggle(block3)
         })
     </script>
 </body>
