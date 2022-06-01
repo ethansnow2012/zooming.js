@@ -1,7 +1,9 @@
 .zooming-body{
     position: relative;
 }
-
+.zooming-frame-wrapper{
+    position: relative;
+}
 .zooming-frame{
     transition: all 1s ease;
     width: 200px;
@@ -15,4 +17,7 @@
 }
 .zooming-frame-incStyle{
     opacity: 0.5;
+}
+.in-zooming, .out-zooming{
+    position: absolute !important;
 }

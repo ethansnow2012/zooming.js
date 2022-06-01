@@ -16,6 +16,11 @@
         .playGround1{
             height: 800px;
         }
+
+        [class*="p-block2-"]{
+            position: relative;
+        }
+        
     </style>
     
     <div id="app">
@@ -37,7 +42,7 @@
                     data-framemeta-x="500px" 
                     data-framemeta-width="100px" 
                     data-framemeta-height="100px" 
-                    style="---y:500px; ---x:500px; ---width:100px;---height: 100px;"
+                    style="---y:500px; ---x:500px; ---width:100px;---height: 100px;background-color: rgb(224, 212, 42);"
                     >
                 </div>
                 <div class="zooming-frame p-block3 zooming-frame-incStyle" 
@@ -59,8 +64,16 @@
             <div class="playGround1-title">
                 Demo case 2: zooming in document flow
             </div>
-            <div class="playGround2">
-
+            <div class="playGround2 zooming-frame-wrapper">
+                <div class="zooming-frame p-block2-1">
+                    AAAAA
+                </div>
+                <div class="zooming-frame p-block2-2">
+                    BBBBB
+                </div>
+                <div class="zooming-frame p-block2-3">
+                    CCCCC
+                </div>
             </div>
         </div>
         
@@ -91,6 +104,20 @@
         })
         block3.addEventListener('click', ()=>{
             zooming.helper.toggle(block3)
+        })
+        document.querySelector('.p-button1').addEventListener("click", ()=>{
+            [block1, block2, block3].forEach(x=>zooming.helper.toggle(x))
+        })
+    </script>
+    <script>
+        const block2_1 = document.querySelector(".p-block2-1")
+        const block2_2 = document.querySelector(".p-block2-2")
+        const block2_3 = document.querySelector(".p-block2-3")
+
+        ;([block2_1, block2_2, block2_3]).forEach((el)=>{
+            el.addEventListener('click', ()=>{
+                zooming.helper.toggle(el)
+            })
         })
     </script>
 </body>

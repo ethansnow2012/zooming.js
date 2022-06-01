@@ -1,5 +1,10 @@
 console.log('zooming.js');
 
+enum styleNotAbsolute {
+    relative = 'relative',
+    emply = ''
+}
+
 enum cssVariable {
     width = '---width',
     height = '---height',
@@ -31,25 +36,25 @@ interface ZoomingPrototype {
     toggleZoomInOut(targetFrame: HTMLElement, operation: frameOperations): void,
     in(index: HTMLElement): void,
     out(index: HTMLElement): void,
-    getDynamicRootClientRect (): DOMRect
+    getDynamicRootClientRect(HTMLElement): DOMRect
 }
 interface ZoomingInnerThis {
-    rootClientRect: DOMRect
+    rootClientRect: DOMRect,
+    styleNotAbsolute: typeof styleNotAbsolute,
     cssClasses: typeof cssClasses,
-    helper: ZoomingPrototype$helper
+    helper: ZoomingPrototype$helper,
+    relativeFrameInRegister: WeakMap<HTMLElement, any>,// typing needed
+    relativeFrameOutRegister: WeakMap<HTMLElement, any>// typing needed
 }
 interface Zooming extends ZoomingPrototype, ZoomingInnerThis { }
 
 
 
 function _zooming(this: Zooming): void {
-    const body: HTMLElement = document.body
-    const rootClientRect = body.getBoundingClientRect();
-
-    body.classList.add(cssClasses.body)
-
-    //this.rootClientRect = rootClientRect
+    this.relativeFrameInRegister = new WeakMap()
+    this.relativeFrameOutRegister = new WeakMap()
     this.cssClasses = cssClasses
+    this.styleNotAbsolute = styleNotAbsolute
     this.helper = {
         toggle: (target) => {
             const classList = target.classList
@@ -66,11 +71,11 @@ function _zooming(this: Zooming): void {
         }
     }
 }
-_zooming.prototype.getDynamicRootClientRect = function (target){
+_zooming.prototype.getDynamicRootClientRect = function (target) {
     return target.closest('.zooming-frame-wrapper').getBoundingClientRect();
 }
 _zooming.prototype.getRectContext = function (target): RectContext {
-    const _this = this
+    const _this: Zooming = this
     const clientRect = _this.getDynamicRootClientRect(target)
     const viewportWidth = clientRect.width as number
     const viewportHeight = clientRect.height as number
@@ -80,17 +85,31 @@ _zooming.prototype.getRectContext = function (target): RectContext {
     }
 }
 _zooming.prototype.toggleZoomInOut = function (targetFrame: HTMLElement, operation: frameOperations) {
+    const _this: Zooming = this
+    console.log('toggleZoomInOut')
+    const isRelativeBlock = targetFrame.style.position === _this.styleNotAbsolute.emply
+        || targetFrame.style.position === _this.styleNotAbsolute.relative
+        || _this.relativeFrameInRegister.has(targetFrame)
+
+    if (isRelativeBlock) {
+        _this.relativeFrameInRegister.set(targetFrame, {})
+        console.log(_this.relativeFrameInRegister)
+    }
+
     if (operation in frameOperations) {
-        if (operation === frameOperations.in) {
-            targetFrame.classList.add(cssClasses.inZooming)
-            targetFrame.classList.remove(cssClasses.inZooming)
-        }
         switch (operation) {
             case frameOperations.in:
+                if (isRelativeBlock) {
+                    // calc the corresponding top & left for absolute position, calc the width & height for dummy
+                    // fill the original space with dummy div && turn the real one's position absolute 
+                }
                 targetFrame.classList.add(cssClasses.inZooming)
                 targetFrame.classList.remove(cssClasses.outZooming)
                 break
             case frameOperations.out:
+                if (isRelativeBlock) {
+                    // reverse
+                }
                 targetFrame.classList.add(cssClasses.outZooming)
                 targetFrame.classList.remove(cssClasses.inZooming)
                 break
