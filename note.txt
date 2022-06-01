@@ -19,4 +19,5 @@ refactor: some typescript things
 
 (2022/06/01)
 1. refactor: allowing two elements of html to work && optimizing exposed interface
+2. add demo test case for "width:*%" element
 
