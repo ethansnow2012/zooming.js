@@ -1,0 +1,18 @@
+.zooming-body{
+    position: relative;
+}
+
+.zooming-frame{
+    transition: all 1s ease;
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    top: var(---y);
+    left: var(---x);
+    background: grey;
+    width: var(---width);
+    height: var(---height);;
+}
+.zooming-frame-incStyle{
+    opacity: 0.5;
+}

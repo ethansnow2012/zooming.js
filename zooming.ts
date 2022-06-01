@@ -27,13 +27,14 @@ interface ZoomingPrototype$helper {
     toggle(target: HTMLElement): void
 }
 interface ZoomingPrototype {
-    getRectContext(): RectContext,
+    getRectContext(target: HTMLElement): RectContext,
     toggleZoomInOut(targetFrame: HTMLElement, operation: frameOperations): void,
     in(index: HTMLElement): void,
     out(index: HTMLElement): void,
+    getDynamicRootClientRect (): DOMRect
 }
 interface ZoomingInnerThis {
-    bodyClientRect: DOMRect
+    rootClientRect: DOMRect
     cssClasses: typeof cssClasses,
     helper: ZoomingPrototype$helper
 }
@@ -43,11 +44,11 @@ interface Zooming extends ZoomingPrototype, ZoomingInnerThis { }
 
 function _zooming(this: Zooming): void {
     const body: HTMLElement = document.body
-    const bodyClientRect = body.getBoundingClientRect();
+    const rootClientRect = body.getBoundingClientRect();
 
     body.classList.add(cssClasses.body)
 
-    this.bodyClientRect = bodyClientRect
+    //this.rootClientRect = rootClientRect
     this.cssClasses = cssClasses
     this.helper = {
         toggle: (target) => {
@@ -65,9 +66,14 @@ function _zooming(this: Zooming): void {
         }
     }
 }
-_zooming.prototype.getRectContext = function (): RectContext {
-    const viewportWidth = this.bodyClientRect.width as number
-    const viewportHeight = this.bodyClientRect.height as number
+_zooming.prototype.getDynamicRootClientRect = function (target){
+    return target.closest('.zooming-frame-wrapper').getBoundingClientRect();
+}
+_zooming.prototype.getRectContext = function (target): RectContext {
+    const _this = this
+    const clientRect = _this.getDynamicRootClientRect(target)
+    const viewportWidth = clientRect.width as number
+    const viewportHeight = clientRect.height as number
     return {
         viewportWidth,
         viewportHeight
@@ -97,7 +103,7 @@ _zooming.prototype.toggleZoomInOut = function (targetFrame: HTMLElement, operati
 
 _zooming.prototype.in = function (target: HTMLDivElement) {
     const _this: Zooming = this
-    const { viewportWidth, viewportHeight } = _this.getRectContext()
+    const { viewportWidth, viewportHeight } = _this.getRectContext(target)
 
     const targetFrame: HTMLElement = target
 

@@ -5,70 +5,65 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="zooming.css" />
 </head>
 <body>
     <style>
-        /*other css that will be remove soon*/
         body{
             min-height:700px;
             margin: 0;
         }
-    </style>
-    <style>
-        .zooming-body{
-            position: relative;
-        }
-
-        .zooming-frame{
-            transition: all 1s ease;
-            width: 200px;
-            height: 200px;
-            position: absolute;
-            top: var(---y);
-            left: var(---x);
-            background: grey;
-            width: var(---width);
-            height: var(---height);;
-        }
-        .zooming-frame-incStyle{
-            opacity: 0.5;
+        .playGround1{
+            height: 800px;
         }
     </style>
+    
     <div id="app">
-        <div class="playGround1">
-            <div class="zooming-frame p-block1 zooming-frame-incStyle" 
-                data-framemeta-y="100px" 
-                data-framemeta-x="100px" 
-                data-framemeta-width="300px" 
-                data-framemeta-height="300px" 
-                style="---y:100px; ---x:100px; ---width:300px;---height: 300px;"
-                >
+        <div class="playGround1-wrapper">
+            <div class="playGround1-title">
+                Demo case 1: zooming to absolute wrapper
             </div>
-            <div class="zooming-frame p-block2 zooming-frame-incStyle" 
-                data-framemeta-y="500px" 
-                data-framemeta-x="500px" 
-                data-framemeta-width="100px" 
-                data-framemeta-height="100px" 
-                style="---y:500px; ---x:500px; ---width:100px;---height: 100px;"
-                >
-            </div>
-            <div class="zooming-frame p-block3 zooming-frame-incStyle" 
-                data-framemeta-y="10%" 
-                data-framemeta-x="10%" 
-                data-framemeta-width="10%" 
-                data-framemeta-height="10%" 
-                style="---y:10%; ---x:10%; ---width:10%;---height: 10%; background-color: aqua;"
-                >
-            </div>
-            <div>
-                <button class="p-button1">
-                    Invoke At Once
-                </button>
+            <div class="playGround1 zooming-frame-wrapper">
+                <div class="zooming-frame p-block1 zooming-frame-incStyle" 
+                    data-framemeta-y="100px" 
+                    data-framemeta-x="100px" 
+                    data-framemeta-width="300px" 
+                    data-framemeta-height="300px" 
+                    style="---y:100px; ---x:100px; ---width:300px;---height: 300px;"
+                    >
+                </div>
+                <div class="zooming-frame p-block2 zooming-frame-incStyle" 
+                    data-framemeta-y="500px" 
+                    data-framemeta-x="500px" 
+                    data-framemeta-width="100px" 
+                    data-framemeta-height="100px" 
+                    style="---y:500px; ---x:500px; ---width:100px;---height: 100px;"
+                    >
+                </div>
+                <div class="zooming-frame p-block3 zooming-frame-incStyle" 
+                    data-framemeta-y="10%" 
+                    data-framemeta-x="10%" 
+                    data-framemeta-width="10%" 
+                    data-framemeta-height="10%" 
+                    style="---y:10%; ---x:10%; ---width:10%;---height: 10%; background-color: aqua;"
+                    >
+                </div>
+                <div>
+                    <button class="p-button1">
+                        Invoke At Once
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="playGround2">
+        <div class="playGround2-wrapper">
+            <div class="playGround1-title">
+                Demo case 2: zooming in document flow
+            </div>
+            <div class="playGround2">
 
+            </div>
         </div>
+        
     </div>
     <script src="./zooming.js" ></script>
     <script>
