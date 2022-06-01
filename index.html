@@ -39,16 +39,44 @@
             style="---y:100px; ---x:100px; ---width:300px;---height: 300px;"
             >
         </div>
+        <div class="zooming-frame p-block2" 
+            data-framemeta-y="500px" 
+            data-framemeta-x="500px" 
+            data-framemeta-width="100px" 
+            data-framemeta-height="100px" 
+            style="---y:500px; ---x:500px; ---width:100px;---height: 100px;"
+            >
+        </div>
     </div>
     <script src="./zooming.js" ></script>
     <script>
         const block1 = document.querySelector(".p-block1")
+        const block2 = document.querySelector(".p-block2")
         block1.addEventListener('click', ()=>{
-            if(block1.classList.contains(zooming.cssClasses.outZooming)){
-                zooming.in(0)
-            }else{
-                zooming.out(0)
-            }            
+            const classList = block1.classList
+            switch(true){
+                case classList.contains(zooming.cssClasses.outZooming):
+                    zooming.in(block1)
+                    break;
+                case classList.contains(zooming.cssClasses.inZooming):
+                    zooming.out(block1)
+                    break;
+                default:
+                    zooming.in(block1)     
+            }              
+        })
+        block2.addEventListener('click', ()=>{
+            const classList = block2.classList
+            switch(true){
+                case classList.contains(zooming.cssClasses.outZooming):
+                    zooming.in(block2)
+                    break;
+                case classList.contains(zooming.cssClasses.inZooming):
+                    zooming.out(block2)
+                    break;
+                default:
+                    zooming.in(block2)     
+            }     
         })
     </script>
 </body>

@@ -23,18 +23,15 @@ type RectContext = {
     viewportHeight: number
 }
 
-interface _zoomingType {
-    zoomingFrames?: NodeListOf<HTMLElement>
-}
 
 interface ZoomingPrototype {
-    getRectContext: () => RectContext,
-    toggleZoomInOut: (targetFrame: HTMLElement, operation: frameOperations) => void,
-    in: (index: number|undefined)=>void,
-    out: (index: number|undefined)=>void,
+    getRectContext(): RectContext,
+    toggleZoomInOut(targetFrame: HTMLElement, operation: frameOperations): void,
+    in(index: number|undefined): void,
+    out(index: number|undefined): void,
 }
 interface ZoomingInnerThis {
-    zoomingFrames: NodeListOf<HTMLElement>
+    
     bodyClientRect: DOMRect
     cssClasses: typeof cssClasses
 }
@@ -42,14 +39,10 @@ interface Zooming extends ZoomingPrototype, ZoomingInnerThis {}
 
 function _zooming(this: Zooming): void {
     const body: HTMLElement = document.body
-    const zoomingFrames: NodeListOf<HTMLElement> = document.querySelectorAll('.zooming-frame')
     const bodyClientRect = body.getBoundingClientRect();
-
-    zoomingFrames.forEach(x => x.classList.add(cssClasses.outZooming))
 
     body.classList.add(cssClasses.body)
 
-    this.zoomingFrames = zoomingFrames
     this.bodyClientRect = bodyClientRect
 
     this.cssClasses = cssClasses
@@ -84,12 +77,12 @@ _zooming.prototype.toggleZoomInOut = function (targetFrame: HTMLElement, operati
     }
 
 }
-_zooming.prototype.in = function (index: number|undefined) {
+
+_zooming.prototype.in = function (target: HTMLDivElement) {
     const _this: Zooming = this
-    const targetIndex = index ?? 0
     const { viewportWidth, viewportHeight } = _this.getRectContext()
 
-    const targetFrame: HTMLElement = _this.zoomingFrames[targetIndex]
+    const targetFrame: HTMLElement = target
 
     _this.toggleZoomInOut(targetFrame, frameOperations.in)
 
@@ -101,10 +94,8 @@ _zooming.prototype.in = function (index: number|undefined) {
     targetFrame.classList.add(cssClasses.inZooming)
 }
 
-_zooming.prototype.out = function (index: number|undefined) {
-    const targetIndex = index ?? 0
-    //const {viewportWidth, viewportHeight} = this.getRectContext()
-    const targetFrame: HTMLElement = this.zoomingFrames[targetIndex]
+_zooming.prototype.out = function (target: HTMLDivElement) {
+    const targetFrame: HTMLElement = target
     this.toggleZoomInOut(targetFrame, frameOperations.out)
 
     targetFrame.style.setProperty(cssVariable.width, `${targetFrame.dataset.framemetaWidth}`)

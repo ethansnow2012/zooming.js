@@ -14,3 +14,9 @@ context
 other:
 1. transform back and forth width absolute and relative with 'zooming-frame'
 
+(2022/05/30)
+refactor: some typescript things
+
+(2022/06/01)
+1. refactor: allowing two elements of html to work && optimizing exposed interface
+
