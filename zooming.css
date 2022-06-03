@@ -21,3 +21,10 @@
 .in-zooming, .out-zooming{
     position: absolute !important;
 }
+.zooming-dummyDiv{
+    background: #00800075;
+}
+.zooming-relative2absolute{
+    position: absolute !important;
+    z-index: 99999;
+}
