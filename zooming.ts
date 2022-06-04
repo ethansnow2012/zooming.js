@@ -108,9 +108,9 @@ function _zooming(this: Zooming): void {
         }
     }
     this.innerUtils = {
-        stringUnitsRemove: (str)=>{
-            const whiteListUnit = ['px','%','vw','vh']
-            return str.replace(new RegExp(`(${whiteListUnit.join('|')})(${whiteListUnit.join('|')})`),"$1")
+        stringUnitsRemove: (str) => {
+            const whiteListUnit = ['px', '%', 'vw', 'vh']
+            return str.replace(new RegExp(`(${whiteListUnit.join('|')})(${whiteListUnit.join('|')})`), "$1")
         }
     }
 }
@@ -145,20 +145,28 @@ _zooming.prototype.setInitialCssAttribute = function (target, dimensions) {
 
 _zooming.prototype.insertDummy = function (element, target, { width, height, top, left }: fullHtmlDimensions) {
     const _this: Zooming = this
+    const root = target.parentNode
     _this.dummyDiv.set(target, element)
+    const previousDummy = root.querySelector(`.${cssClasses.dummyDiv}`)
+    if (previousDummy) {
+        previousDummy.remove()
+    }
+
     element.style.position = "relative"
     element.style.width = width + 'px'
     element.style.height = height + 'px'
 
     element.classList.add(cssClasses.dummyDiv)
-
-    target.parentNode.insertBefore(element, target)//parentNode => not flexable
+    root.insertBefore(element, target)//parentNode => not flexable
+    
 }
-_zooming.prototype.removeDummy = function(target){
+_zooming.prototype.removeDummy = function (target) {
     const _this: Zooming = this
     const dummyTobeRemoved = _this.dummyDiv.get(target)
     //dummyTobeRemoved.parentNode
-    dummyTobeRemoved.remove()
+    if (dummyTobeRemoved) {
+        dummyTobeRemoved.remove()
+    }
 }
 
 
@@ -195,8 +203,8 @@ _zooming.prototype.toggleZoomInOut$Deferred = function (targetFrame: HTMLElement
                     targetFrame.style.setProperty(cssVariable.width, _this.innerUtils.stringUnitsRemove(`${targetFrame.dataset.framemetaWidth}px`))
                     targetFrame.style.setProperty(cssVariable.height, _this.innerUtils.stringUnitsRemove(`${targetFrame.dataset.framemetaHeight}px`))
                     targetFrame.style.setProperty(cssVariable.x, _this.innerUtils.stringUnitsRemove(`${targetFrame.dataset.framemetaX}px`))
-                    targetFrame.style.setProperty(cssVariable.y,_this.innerUtils.stringUnitsRemove( `${targetFrame.dataset.framemetaY}px`))
-                    
+                    targetFrame.style.setProperty(cssVariable.y, _this.innerUtils.stringUnitsRemove(`${targetFrame.dataset.framemetaY}px`))
+
                 }, 0)
 
                 break;
@@ -206,7 +214,6 @@ _zooming.prototype.toggleZoomInOut$Deferred = function (targetFrame: HTMLElement
     }
 }
 
-_zooming.prototype.toggleZoomInOut = 
 
 _zooming.prototype.toggleZoomInOut = function (targetFrame: HTMLElement, operation: frameOperations) {
     const _this: Zooming = this
@@ -215,6 +222,7 @@ _zooming.prototype.toggleZoomInOut = function (targetFrame: HTMLElement, operati
 
     if (isRelativeBlock) {
         _this.relativeFrameInRegister.set(targetFrame, {})
+
         console.log(_this.relativeFrameInRegister)
     }
 
@@ -253,6 +261,7 @@ _zooming.prototype.toggleZoomInOut = function (targetFrame: HTMLElement, operati
                     targetFrame.classList.add(cssClasses.relative2Absolute)
 
 
+
                     targetFrame.classList.add(cssClasses.inZooming)
                     targetFrame.classList.remove(cssClasses.outZooming)
 
@@ -271,24 +280,30 @@ _zooming.prototype.toggleZoomInOut = function (targetFrame: HTMLElement, operati
                     // reverse
                     //_this.removeDummy(targetFrame)//too soon
 
-                    if(_this.endTransistionHandle.has(targetFrame)){
+                    if (_this.endTransistionHandle.has(targetFrame)) {
                         targetFrame.removeEventListener('transitionend', _this.endTransistionHandle.get(targetFrame))
                         _this.endTransistionHandle.delete(targetFrame)
                     }
-                    const transitionendHandle = targetFrame.addEventListener('transitionend', () => {
-                        targetFrame.classList.remove(cssClasses.relative2Absolute)
-                        _this.removeDummy(targetFrame)
-                        targetFrame.classList.remove(cssClasses.outZooming)
-                        targetFrame.classList.remove(cssClasses.inZooming)
 
-                        targetFrame.style.setProperty(cssVariable.x, `unset`)
-                        targetFrame.style.setProperty(cssVariable.y, `unset`)
+                    targetFrame.classList.add(cssClasses.outZooming)
+                    targetFrame.classList.remove(cssClasses.inZooming)
+
+                    const transitionendHandle = targetFrame.addEventListener('transitionend', () => {
+                        if (targetFrame.classList.contains(cssClasses.outZooming)) {
+                            targetFrame.classList.remove(cssClasses.relative2Absolute)
+                            _this.removeDummy(targetFrame)
+
+                            targetFrame.classList.remove(cssClasses.outZooming)
+
+                            targetFrame.style.setProperty(cssVariable.x, `unset`)
+                            targetFrame.style.setProperty(cssVariable.y, `unset`)
+                        }
                     });
 
                     _this.endTransistionHandle.set(targetFrame, transitionendHandle)
 
-                    
-                }else{
+
+                } else {
                     targetFrame.classList.add(cssClasses.outZooming)
                     targetFrame.classList.remove(cssClasses.inZooming)
                 }
