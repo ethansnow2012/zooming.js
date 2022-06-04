@@ -18,6 +18,9 @@
 .zooming-frame-incStyle{
     opacity: 0.5;
 }
+.in-zooming{
+    z-index: 2;
+}
 .in-zooming, .out-zooming{
     position: absolute !important;
 }
