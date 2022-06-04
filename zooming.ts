@@ -109,7 +109,8 @@ function _zooming(this: Zooming): void {
     }
     this.innerUtils = {
         stringUnitsRemove: (str)=>{
-            return str.replace('pxpx', 'px')
+            const whiteListUnit = ['px','%','vw','vh']
+            return str.replace(new RegExp(`(${whiteListUnit.join('|')})(${whiteListUnit.join('|')})`),"$1")
         }
     }
 }

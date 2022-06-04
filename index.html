@@ -13,6 +13,19 @@
             min-height:700px;
             margin: 0;
         }
+        .app-body{
+            max-width: 780px;
+            margin: auto;
+            padding-top: 5vmin;
+            padding-bottom: 5vmin;
+        }
+        .app-body > * + *{
+            margin-top: 30px;
+        }
+        .app-body-header{
+            font-size: 2em;
+            font-weight: bold;
+        }
         .playGround1{
             height: 800px;
         }
@@ -20,10 +33,16 @@
         [class*="p-block2-"]{
             position: relative;
         }
-        
     </style>
-    
-    <div id="app">
+    <style>
+        .playGround1-wrapper > * + *, .playGround2-wrapper > * + *{
+            margin-top: 15px;
+        }
+    </style>
+    <div class="app-body">
+        <div class="app-body-header">
+            ZoomingDiv.js
+        </div>
         <div class="playGround1-wrapper">
             <div class="playGround1-title">
                 Demo case 1: zooming to absolute wrapper
