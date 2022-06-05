@@ -31,6 +31,7 @@ enum frameMetas {
     framemetaWidth = "framemeta-width",
     framemetaHeight = "framemeta-height"
 }
+
 enum frameMetas$map$dimensionKey {
     framemetaY = "top",
     framemetaX = "left",
@@ -68,7 +69,8 @@ interface ZoomingPrototype {
     removeDummy(target: Element): void,
     setInitialCssAttribute(target: Element, dimension: fullHtmlDimensions): void,
     toggleZoomInOut$Deferred(targetFrame: HTMLElement, operation: frameOperations, aa?: RectContext): void,
-    isRelativeBlock(target: Element)
+    isRelativeBlock(target: Element),
+    getAndSetTheFullHtmlDimensions(target: Element): fullHtmlDimensions
 }
 interface ZoomingInnerThis {
     rootClientRect: DOMRect,
@@ -79,9 +81,13 @@ interface ZoomingInnerThis {
     relativeFrameInRegister: WeakMap<HTMLElement, any>,// typing needed
     relativeFrameOutRegister: WeakMap<HTMLElement, any>,// typing needed
     dummyDiv: WeakMap<HTMLElement, any>,
-    endTransistionHandle: WeakMap<HTMLElement, any>,
+    endTransistionHandle: WeakMap<HTMLElement, any>, 
 }
 interface Zooming extends ZoomingPrototype, ZoomingInnerThis { }
+
+function isFrameMetas(obj: any): obj is frameMetas {
+    return 'framemetaY' in obj && 'framemetaX' in obj && 'framemetaWidth' in obj && 'framemetaHeight' in obj;
+}
 
 
 
@@ -214,6 +220,29 @@ _zooming.prototype.toggleZoomInOut$Deferred = function (targetFrame: HTMLElement
     }
 }
 
+_zooming.prototype.getAndSetTheFullHtmlDimensions = function(targetFrame): fullHtmlDimensions{
+    const _this: Zooming = this
+    const wrapperRect = _this.getDynamicRootClientRect(targetFrame)
+    const targetRect = targetFrame.getBoundingClientRect()
+
+    const top = targetRect.top - wrapperRect.top
+    const left = targetRect.left - wrapperRect.left
+    const width = targetRect.width
+    const height = targetRect.height
+
+    const dims: fullHtmlDimensions = { width, height, top, left }
+
+    if ( !isFrameMetas(targetFrame.dataset) ) {
+        _this.setInitialCssAttribute(targetFrame, dims)
+    }else{
+        dims.top = Number(targetFrame.dataset['framemetaY'])
+        dims.left = Number(targetFrame.dataset['framemetaX'])
+        dims.width = Number(targetFrame.dataset['framemetaWidth'])
+        dims.height = Number(targetFrame.dataset['framemetaHeight'])
+    }
+
+    return { width, height, top, left }
+}
 
 _zooming.prototype.toggleZoomInOut = function (targetFrame: HTMLElement, operation: frameOperations) {
     const _this: Zooming = this
@@ -230,33 +259,17 @@ _zooming.prototype.toggleZoomInOut = function (targetFrame: HTMLElement, operati
         switch (operation) {
             case frameOperations.in:
                 if (isRelativeBlock) {
-                    //const wrapper = targetFrame.closest('.zooming-frame-wrapper')
+                    
+                    const dims: fullHtmlDimensions = _this.getAndSetTheFullHtmlDimensions(targetFrame) 
 
-                    const wrapperRect = _this.getDynamicRootClientRect(targetFrame)
-                    const targetRect = targetFrame.getBoundingClientRect()
-
-
-
-                    //calc
-                    const top = targetRect.top - wrapperRect.top
-                    const left = targetRect.left - wrapperRect.left
-                    const width = targetRect.width
-                    const height = targetRect.height
-
-                    targetFrame.style.setProperty(cssVariable.width, `${targetRect.width}px`)
-                    targetFrame.style.setProperty(cssVariable.height, `${targetRect.height}px`)
-                    targetFrame.style.setProperty(cssVariable.x, `${left}px`)
-                    targetFrame.style.setProperty(cssVariable.y, `${top}px`)
+                    targetFrame.style.setProperty(cssVariable.width, `${dims.width}px`)
+                    targetFrame.style.setProperty(cssVariable.height, `${dims.height}px`)
+                    targetFrame.style.setProperty(cssVariable.x, `${dims.left}px`)
+                    targetFrame.style.setProperty(cssVariable.y, `${dims.top}px`)
 
                     let newDiv = _this.createDummyDiv()
-                    const dims: fullHtmlDimensions = { width, height, top, left }
 
                     newDiv = _this.insertDummy(newDiv, targetFrame, dims)
-
-                    console.log("isRelativeBlock:in", top, left)
-
-
-                    _this.setInitialCssAttribute(targetFrame, dims)
 
                     targetFrame.classList.add(cssClasses.relative2Absolute)
 
