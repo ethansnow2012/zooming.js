@@ -19,7 +19,7 @@ enum cssClasses {
     dummyDiv = 'zooming-dummyDiv',
     relative2Absolute = 'zooming-relative2absolute'
 }
-
+    
 enum frameOperations {
     in = 'in',
     out = 'out'
