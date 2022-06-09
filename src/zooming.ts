@@ -39,6 +39,13 @@ enum frameMetas$map$dimensionKey {
     framemetaHeight = "height"
 }
 
+enum frameMetas$map$cssVariable {
+    framemetaY = "---width",
+    framemetaX = "---height",
+    framemetaWidth = "---x",
+    framemetaHeight = "---y"
+}
+
 type RectContext = {
     viewportWidth: number,
     viewportHeight: number

@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 import styled from 'styled-components'
-import { zooming }  from 'zooming'
+import { zooming } from 'zooming'
 
 // duplication of types!!!! To be refactored in the future
 enum frameMetas {
@@ -9,12 +9,13 @@ enum frameMetas {
     framemetaWidth = "framemeta-width",
     framemetaHeight = "framemeta-height"
 }
-enum frameMetas$map$dimensionKey {
-    framemetaY = "top",
-    framemetaX = "left",
-    framemetaWidth = "width",
-    framemetaHeight = "height"
+enum frameMetas$map$cssVariable {
+    framemetaY = "---y",
+    framemetaX = "---x",
+    framemetaWidth = "---width",
+    framemetaHeight = "---height"
 }
+
 // derived type
 type frameMetasKeys = keyof typeof frameMetas;
 type FrameMetasType = { [key in frameMetasKeys]: string }
@@ -25,10 +26,13 @@ const Styled = styled.div`
 `
 
 
-export function ZoomingFrame({ className, children, frameMetasType }: { className: any, children: any, frameMetasType: FrameMetasType }) {
+export const ZoomingFrame = forwardRef((
+        { className, children, frameMetasType }: { className: any, children: any, frameMetasType: FrameMetasType },
+        ref
+    ) => {
     const inlineStyle = Object.keys(frameMetasType)
         .reduce((acc, current) => {
-            const currentKey = '---' + frameMetas$map$dimensionKey[current]
+            const currentKey = frameMetas$map$cssVariable[current]
             const currentValue = frameMetasType[current]
             acc[currentKey] = currentValue;
             return acc
@@ -41,14 +45,14 @@ export function ZoomingFrame({ className, children, frameMetasType }: { classNam
             return acc
         }, {})
     return (
-        <Styled >
-            <div
-                className={`${'zooming-frame'} ${className}`}
-                {...react$frameMetasType}
-                style={inlineStyle}
-            >
+        <div ref={ref}
+            className={`${'zooming-frame'}${className ? (" " + className) : ""}`}
+            {...react$frameMetasType}
+            style={inlineStyle}
+        >
+            <Styled >
                 {children}
-            </div>
-        </Styled>
+            </Styled>
+        </div>
     )
-}
+})

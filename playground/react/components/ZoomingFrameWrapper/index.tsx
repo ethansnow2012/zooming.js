@@ -5,9 +5,9 @@ const Styled = styled.div`
 
 `
 
-export function ZoomingFrameWrapper({children}){
+export function ZoomingFrameWrapper({ className, children }) {
     return (
-        <Styled >
+        <Styled className={`${'zooming-frame-wrapper'}${className?(" "+className):""}`}>
             {children}
         </Styled>
     )
