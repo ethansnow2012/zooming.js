@@ -10,6 +10,7 @@ module.exports = {
         patterns: [
           { from: "src/*.html", to: "dist/[name].html" },
           { from: "src/*.css", to: "dist/[name].css" },
+          { from: "src/zooming.css", to: "playground/react/zooming.css" },
         ],
       }),
     ],
