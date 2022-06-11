@@ -15,9 +15,10 @@ enum cssClasses {
     inZooming = 'in-zooming',
     outZooming = 'out-zooming',
     dummyDiv = 'zooming-dummyDiv',
+    dummyDivInline = 'zooming-dummyDiv-inline',
     relative2Absolute = 'zooming-relative2absolute'
 }
-    
+
 enum frameOperations {
     in = 'in',
     out = 'out'
@@ -69,7 +70,7 @@ interface ZoomingPrototype {
     in(index: HTMLElement): void,
     out(index: HTMLElement): void,
     getDynamicRootClientRect(HTMLElement): DOMRect,
-    createDummyDiv(): HTMLDivElement,
+    createDummyDiv(mimicTarget?: Element): HTMLDivElement,
     insertDummy(element: HTMLElement, target: Element, style: fullHtmlDimensions): HTMLDivElement,
     removeDummy(target: Element): void,
     setInitialCssAttribute(target: Element, dimension: fullHtmlDimensions): void,
@@ -88,7 +89,7 @@ interface ZoomingInnerThis {
     relativeFrameInRegister: WeakMap<HTMLElement, any>,// typing needed
     relativeFrameOutRegister: WeakMap<HTMLElement, any>,// typing needed
     dummyDiv: WeakMap<HTMLElement, any>,
-    endTransistionHandle: WeakMap<HTMLElement, any>, 
+    endTransistionHandle: WeakMap<HTMLElement, any>,
 }
 interface Zooming extends ZoomingPrototype, ZoomingInnerThis { }
 
@@ -128,25 +129,25 @@ function _zooming(this: Zooming): void {
     }
 
     const resizeHandle = () => {
-        
+
         const zoomingFrame = Array.from(document.querySelectorAll<HTMLElement>('.zooming-frame'))
-        const zoomingFrame$Relative = zoomingFrame.filter(x=>window.getComputedStyle(x).position==='relative')
-        const zoomingFrame$Absolute = zoomingFrame.filter(x=>window.getComputedStyle(x).position==='absolute')
-        
+        const zoomingFrame$Relative = zoomingFrame.filter(x => window.getComputedStyle(x).position === 'relative')
+        const zoomingFrame$Absolute = zoomingFrame.filter(x => window.getComputedStyle(x).position === 'absolute')
+
         //$Relative$In will basicly not exists so comment it out
         // const zoomingFrame$Relative$In = zoomingFrame$Relative.filter(x=>x.classList.contains(cssClasses.inZooming))
-        const zoomingFrame$Relative$Out = zoomingFrame$Relative.filter(x=>!(x.classList.contains(cssClasses.inZooming)))
-        const zoomingFrame$Absolute$In = zoomingFrame$Absolute.filter(x=>x.classList.contains(cssClasses.inZooming))
-        const zoomingFrame$Absolute$Out = zoomingFrame$Absolute.filter(x=>!(x.classList.contains(cssClasses.inZooming)))
-        
-        zoomingFrame$Absolute$In.forEach((el)=>{
+        const zoomingFrame$Relative$Out = zoomingFrame$Relative.filter(x => !(x.classList.contains(cssClasses.inZooming)))
+        const zoomingFrame$Absolute$In = zoomingFrame$Absolute.filter(x => x.classList.contains(cssClasses.inZooming))
+        const zoomingFrame$Absolute$Out = zoomingFrame$Absolute.filter(x => !(x.classList.contains(cssClasses.inZooming)))
+
+        zoomingFrame$Absolute$In.forEach((el) => {
             const wrapperRect = this.getDynamicRootClientRect(el)
             console.log('wrapperRect', wrapperRect)
             el.style.setProperty(cssVariable.width, `${wrapperRect.width}px`)
             el.style.setProperty(cssVariable.height, `${wrapperRect.height}px`)
 
         })
-        zoomingFrame$Relative$Out.forEach((el)=>{
+        zoomingFrame$Relative$Out.forEach((el) => {
             el.style.removeProperty(cssVariable.width)
             el.style.removeProperty(cssVariable.height)
             el.style.removeProperty(cssVariable.x)
@@ -156,7 +157,7 @@ function _zooming(this: Zooming): void {
         })
     }
 
-    window.addEventListener('resize', ()=>{
+    window.addEventListener('resize', () => {
         resizeHandle()
     })
 }
@@ -174,8 +175,11 @@ _zooming.prototype.getRectContext = function (target): RectContext {
     }
 }
 
-_zooming.prototype.createDummyDiv = function () {
-    var div = document.createElement('div');
+_zooming.prototype.createDummyDiv = function (mimicTarget) {
+    let div = document.createElement('div');
+    if (window.getComputedStyle(mimicTarget).display == 'inline-block') {
+        div.classList.add(cssClasses.dummyDivInline)
+    }
     return div;
 }
 
@@ -216,7 +220,7 @@ _zooming.prototype.insertDummy = function (element, target, { width, height, top
 
     element.classList.add(cssClasses.dummyDiv)
     root.insertBefore(element, target)//parentNode => not flexable
-    
+
 }
 _zooming.prototype.removeDummy = function (target) {
     const _this: Zooming = this
@@ -272,7 +276,7 @@ _zooming.prototype.toggleZoomInOut$Deferred = function (targetFrame: HTMLElement
     }
 }
 
-_zooming.prototype.getAndSetTheFullHtmlDimensions = function(targetFrame): fullHtmlDimensions{
+_zooming.prototype.getAndSetTheFullHtmlDimensions = function (targetFrame): fullHtmlDimensions {
     const _this: Zooming = this
     const wrapperRect = _this.getDynamicRootClientRect(targetFrame)
     const targetRect = targetFrame.getBoundingClientRect()
@@ -284,9 +288,9 @@ _zooming.prototype.getAndSetTheFullHtmlDimensions = function(targetFrame): fullH
 
     const dims: fullHtmlDimensions = { width, height, top, left }
 
-    if ( !isFrameMetas(targetFrame.dataset) ) {
+    if (!isFrameMetas(targetFrame.dataset)) {
         _this.setInitialCssAttribute(targetFrame, dims)
-    }else{
+    } else {
         dims.top = Number(targetFrame.dataset['framemetaY'])
         dims.left = Number(targetFrame.dataset['framemetaX'])
         dims.width = Number(targetFrame.dataset['framemetaWidth'])
@@ -311,28 +315,23 @@ _zooming.prototype.toggleZoomInOut = function (targetFrame: HTMLElement, operati
         switch (operation) {
             case frameOperations.in:
                 if (isRelativeBlock) {
-                    
-                    const dims: fullHtmlDimensions = _this.getAndSetTheFullHtmlDimensions(targetFrame) 
+
+                    const dims: fullHtmlDimensions = _this.getAndSetTheFullHtmlDimensions(targetFrame)
 
                     targetFrame.style.setProperty(cssVariable.width, `${dims.width}px`)
                     targetFrame.style.setProperty(cssVariable.height, `${dims.height}px`)
                     targetFrame.style.setProperty(cssVariable.x, `${dims.left}px`)
                     targetFrame.style.setProperty(cssVariable.y, `${dims.top}px`)
 
-                    let newDiv = _this.createDummyDiv()
+                    let newDiv = _this.createDummyDiv(targetFrame)
 
                     newDiv = _this.insertDummy(newDiv, targetFrame, dims)
 
                     targetFrame.classList.add(cssClasses.relative2Absolute)
 
-
-
                     targetFrame.classList.add(cssClasses.inZooming)
                     targetFrame.classList.remove(cssClasses.outZooming)
 
-                    // setInitialCssAttrible
-                    // calc the corresponding top & left for absolute position, calc the width & height for dummy
-                    // fill the original space with dummy div && turn the real one's position absolute 
 
                 } else {
                     targetFrame.classList.add(cssClasses.inZooming)

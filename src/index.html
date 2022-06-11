@@ -33,6 +33,11 @@
         [class*="p-block2-"]{
             position: relative;
         }
+        [class*="p-block3-"]{
+            position: relative;
+            width: max-content;
+            display: inline-block; /* Not suports 'inline'. Use inline-block.*/
+        }
     </style>
     <style>
         .playGround1-wrapper > * + *, .playGround2-wrapper > * + *{
@@ -99,6 +104,22 @@
                 </div>
             </div>
         </div>
+        <div class="playGround3-wrapper">
+            <div class="playGround3-title">
+                Demo Case 3: zooming in document flow(horizontal direction)
+            </div>
+            <div class="playGround3 zooming-frame-wrapper">
+                <div class="zooming-frame zooming-frame-inlinblock p-block3-1" >
+                    AAAAA
+                </div>
+                <div class="zooming-frame zooming-frame-inlinblock p-block3-2" style=" background-color: rgb(224, 212, 42);">
+                    BBBBB
+                </div>
+                <div class="zooming-frame zooming-frame-inlinblock p-block3-3" style=" background-color: aqua;">
+                    CCCCC
+                </div>
+            </div>
+        </div>
         
     </div>
     <script src="./zooming.js" ></script>
@@ -138,6 +159,17 @@
         const block2_3 = document.querySelector(".p-block2-3")
 
         ;([block2_1, block2_2, block2_3]).forEach((el)=>{
+            el.addEventListener('click', ()=>{
+                zooming.helper.toggle(el)
+            })
+        })
+    </script>
+    <script>
+        const block3_1 = document.querySelector(".p-block3-1")
+        const block3_2 = document.querySelector(".p-block3-2")
+        const block3_3 = document.querySelector(".p-block3-3")
+
+        ;([block3_1, block3_2, block3_3]).forEach((el)=>{
             el.addEventListener('click', ()=>{
                 zooming.helper.toggle(el)
             })

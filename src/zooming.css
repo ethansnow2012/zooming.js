@@ -13,8 +13,13 @@
     left: var(---x);
     background: grey;
     width: var(---width);
-    height: var(---height);;
+    height: var(---height);
 }
+.zooming-frame[class*="zooming-frame"]{/* to increase specificity*/
+    width: var(---width);
+    height: var(---height);
+}
+
 .zooming-frame-incStyle{
     opacity: 0.5;
 }
@@ -30,4 +35,13 @@
 .zooming-relative2absolute{
     position: absolute !important;
     z-index: 99999;
+}
+.zooming-dummyDiv-inline{
+    display: inline-block;
+    vertical-align: top;
+    margin-right: -0.32em;
+}
+.zooming-frame-inlinblock{
+    display: inline-block;
+    margin-right: -0.32em;
 }
