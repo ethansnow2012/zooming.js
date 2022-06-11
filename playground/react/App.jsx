@@ -62,8 +62,6 @@ const App = () => {
   const frame2_2 = useRef(null)
   const frame2_3 = useRef(null)
 
-  console.log('render')
-
   useEffect(() => {
     if (frame1.current && frame2.current && frame3.current) {
       [frame1.current, frame2.current, frame3.current].forEach((el) => {

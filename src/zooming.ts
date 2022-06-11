@@ -1,5 +1,3 @@
-console.log('zooming.js');
-
 enum styleNotAbsolute {
     relative = 'relative',
     emply = ''
@@ -75,6 +73,8 @@ interface ZoomingPrototype {
     insertDummy(element: HTMLElement, target: Element, style: fullHtmlDimensions): HTMLDivElement,
     removeDummy(target: Element): void,
     setInitialCssAttribute(target: Element, dimension: fullHtmlDimensions): void,
+    removeInitialCssAttribute(target: Element): void,
+    //updateInitialCssAttribute(target: Element, newMeta: any): void,//typeof frameMetas
     toggleZoomInOut$Deferred(targetFrame: HTMLElement, operation: frameOperations, aa?: RectContext): void,
     isRelativeBlock(target: Element),
     getAndSetTheFullHtmlDimensions(target: Element): fullHtmlDimensions
@@ -126,6 +126,39 @@ function _zooming(this: Zooming): void {
             return str.replace(new RegExp(`(${whiteListUnit.join('|')})(${whiteListUnit.join('|')})`), "$1")
         }
     }
+
+    const resizeHandle = () => {
+        
+        const zoomingFrame = Array.from(document.querySelectorAll<HTMLElement>('.zooming-frame'))
+        const zoomingFrame$Relative = zoomingFrame.filter(x=>window.getComputedStyle(x).position==='relative')
+        const zoomingFrame$Absolute = zoomingFrame.filter(x=>window.getComputedStyle(x).position==='absolute')
+        
+        //$Relative$In will basicly not exists so comment it out
+        // const zoomingFrame$Relative$In = zoomingFrame$Relative.filter(x=>x.classList.contains(cssClasses.inZooming))
+        const zoomingFrame$Relative$Out = zoomingFrame$Relative.filter(x=>!(x.classList.contains(cssClasses.inZooming)))
+        const zoomingFrame$Absolute$In = zoomingFrame$Absolute.filter(x=>x.classList.contains(cssClasses.inZooming))
+        const zoomingFrame$Absolute$Out = zoomingFrame$Absolute.filter(x=>!(x.classList.contains(cssClasses.inZooming)))
+        
+        zoomingFrame$Absolute$In.forEach((el)=>{
+            const wrapperRect = this.getDynamicRootClientRect(el)
+            console.log('wrapperRect', wrapperRect)
+            el.style.setProperty(cssVariable.width, `${wrapperRect.width}px`)
+            el.style.setProperty(cssVariable.height, `${wrapperRect.height}px`)
+
+        })
+        zoomingFrame$Relative$Out.forEach((el)=>{
+            el.style.removeProperty(cssVariable.width)
+            el.style.removeProperty(cssVariable.height)
+            el.style.removeProperty(cssVariable.x)
+            el.style.removeProperty(cssVariable.y)
+
+            this.removeInitialCssAttribute(el)
+        })
+    }
+
+    window.addEventListener('resize', ()=>{
+        resizeHandle()
+    })
 }
 _zooming.prototype.getDynamicRootClientRect = function (target) {
     return target.closest('.zooming-frame-wrapper').getBoundingClientRect();
@@ -147,14 +180,26 @@ _zooming.prototype.createDummyDiv = function () {
 }
 
 _zooming.prototype.setInitialCssAttribute = function (target, dimensions) {
-    console.log(frameMetas)
-
     for (let x in frameMetas) {
         let value = dimensions[frameMetas$map$dimensionKey[x]]
         target.dataset[x] = value
-        console.log(x)
     }
 }
+
+_zooming.prototype.removeInitialCssAttribute = function (target) {
+    for (let x in frameMetas) {
+        target.removeAttribute(`data-${frameMetas[x]}`)
+    }
+}
+
+// _zooming.prototype.updateInitialCssAttribute = function (target, newMeta: any) {//typeof frameMetas
+//     for (let x in frameMetas) {
+//         if(newMeta[x] !== undefined){
+//             const key = `data-${frameMetas[x]}`
+//             target.setAttribute(key, newMeta[x])
+//         }
+//     }
+// }
 
 _zooming.prototype.insertDummy = function (element, target, { width, height, top, left }: fullHtmlDimensions) {
     const _this: Zooming = this
