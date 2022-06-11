@@ -27,17 +27,18 @@ const Styled = styled.div`
 
 
 export const ZoomingFrame = forwardRef((
-        { className, children, frameMetasType }: { className: any, children: any, frameMetasType: FrameMetasType },
+        { className, children, frameMetasType }
+            : { className: any, children: any, frameMetasType?: FrameMetasType },
         ref
     ) => {
-    const inlineStyle = Object.keys(frameMetasType)
+    const inlineStyle = Object.keys(frameMetasType??{})
         .reduce((acc, current) => {
             const currentKey = frameMetas$map$cssVariable[current]
             const currentValue = frameMetasType[current]
             acc[currentKey] = currentValue;
             return acc
         }, {})
-    const react$frameMetasType = Object.keys(frameMetasType)
+    const react$frameMetasType = Object.keys(frameMetasType??{})
         .reduce((acc, current) => {
             const currentKey = 'data-' + (current.replace(/([A-Z])/g, "-$1").toLowerCase())
             const currentValue = frameMetasType[current]
